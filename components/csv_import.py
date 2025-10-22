@@ -8,8 +8,8 @@ def render_csv_import(db_manager):
     
     st.info("""
     **CSV Format Requirements:**
-    - Must have columns for: Date, Amount
-    - Optional columns: Description, Category
+    - Must have columns for: Date, Amount, Category
+    - Optional columns: Description
     - Date format: YYYY-MM-DD (e.g., 2024-10-21)
     - Amount: Positive for income, negative for expenses
     """)
@@ -51,6 +51,12 @@ def render_csv_import(db_manager):
                     options=df.columns.tolist(),
                     help="Select the column containing transaction amounts"
                 )
+
+                category_col = st.selectbox(
+                    "Category Column (optional)",
+                    options=['None'] + df.columns.tolist(),
+                    help="Select the column containing categories"
+                )
             
             with col2:
                 description_col = st.selectbox(
@@ -58,24 +64,11 @@ def render_csv_import(db_manager):
                     options=['None'] + df.columns.tolist(),
                     help="Select the column containing descriptions"
                 )
-                
-                category_col = st.selectbox(
-                    "Category Column (optional)",
-                    options=['None'] + df.columns.tolist(),
-                    help="Select the column containing categories"
-                )
-            
-            # Default category for uncategorized transactions
-            default_category = st.text_input(
-                "Default Category",
-                value="Uncategorized",
-                help="Category to use when none is specified"
-            )
             
             st.divider()
             
             # Import button
-            col1, col2, col3 = st.columns([1, 1, 2])
+            col1, col2 = st.columns([1, 1])
             
             with col1:
                 if st.button("🚀 Import Transactions", type="primary"):
@@ -84,9 +77,8 @@ def render_csv_import(db_manager):
                         df=df,
                         date_col=date_col,
                         amount_col=amount_col,
+                        category_col=category_col,
                         description_col=description_col if description_col != 'None' else None,
-                        category_col=category_col if category_col != 'None' else None,
-                        default_category=default_category
                     )
             
             with col2:
@@ -98,10 +90,8 @@ def render_csv_import(db_manager):
             st.info("Please make sure your CSV is properly formatted.")
 
 
-def import_transactions(db_manager, df, date_col, amount_col, 
-                       description_col, category_col, default_category):
+def import_transactions(db_manager, df, date_col, amount_col, category_col, description_col):
     """Process and import transactions from DataFrame"""
-    
     try:
         # Progress bar
         progress_bar = st.progress(0)
@@ -141,10 +131,7 @@ def import_transactions(db_manager, df, date_col, amount_col,
                     description = ''
                 
                 # Extract category
-                if category_col and category_col in df.columns and pd.notna(row[category_col]):
-                    category = str(row[category_col])
-                else:
-                    category = default_category
+                category = str(row[category_col])            
                 
                 # Add to database
                 db_manager.add_transaction(

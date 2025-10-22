@@ -1,6 +1,7 @@
 import streamlit as st
 from datetime import datetime
 from components.csv_import import render_csv_import, generate_example_csv
+from streamlit_option_menu import option_menu
 from database.db_manager import DatabaseManager
 from components.transaction_form import render_transaction_form
 from components.charts import (
@@ -52,9 +53,10 @@ st.title("💰 Personal Finance Dashboard")
 
 # Sidebar
 with st.sidebar:
-    st.header("Navigation")
-    page = st.radio(["Dashboard", "Add Transaction", "Transactions", "Analytics", "Import CSV"])
-
+    page = option_menu(None,
+                       ["Dashboard", 'Add Transaction', "Transactions", "Analytics", "Import CSV"], 
+                       icons=['bank', 'cash-coin', 'credit-card', 'graph-up-arrow', 'filetype-csv'], 
+                       menu_icon="cast", default_index=1)
 # Dashboard Page
 if page == "Dashboard":
     st.header("Overview")
