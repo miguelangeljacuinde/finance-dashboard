@@ -72,3 +72,21 @@ class DatabaseManager:
         cursor.execute('DELETE FROM transactions WHERE id = ?', (transaction_id,))
         conn.commit()
         conn.close()
+
+    def update_transaction_details(self, transaction_id, new_details):
+        '''Update transaction details'''
+        conn = self.get_connection()
+        cursor = conn.cursor()
+        
+        fields = []
+        values = []
+        for key, value in new_details.items():
+            fields.append(f"{key} = ?")
+            values.append(value)
+        values.append(transaction_id)
+        
+        query = f"UPDATE transactions SET {', '.join(fields)} WHERE id = ?"
+        cursor.execute(query, values)
+        
+        conn.commit()
+        conn.close()

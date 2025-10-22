@@ -12,6 +12,7 @@ class Transaction:
     
     def to_dict(self):
         return {
+            'id': self.id,
             'date': self.date,
             'category': self.category,
             'amount': self.amount,
