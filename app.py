@@ -56,7 +56,7 @@ with st.sidebar:
     page = option_menu(None,
                        ["Dashboard", 'Add Transaction', "Transactions", "Analytics", "Import CSV"], 
                        icons=['bank', 'cash-coin', 'credit-card', 'graph-up-arrow', 'filetype-csv'], 
-                       menu_icon="cast", default_index=1)
+                       menu_icon="cast", default_index=0)
 # Dashboard Page
 if page == "Dashboard":
     st.header("Overview")
